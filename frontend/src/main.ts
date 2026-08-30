@@ -57,6 +57,16 @@ function requiredElement<T extends HTMLElement>(id: string): T {
   return element as T;
 }
 
+function requiredCanvasContext(
+  canvasElement: HTMLCanvasElement,
+): CanvasRenderingContext2D {
+  const canvasContext = canvasElement.getContext("2d");
+  if (!canvasContext) {
+    throw new Error("Canvas is unavailable");
+  }
+  return canvasContext;
+}
+
 const video = requiredElement<HTMLVideoElement>("camera");
 const canvas = requiredElement<HTMLCanvasElement>("overlay");
 const startButton = requiredElement<HTMLButtonElement>("start-camera");
@@ -70,10 +80,7 @@ const repCount = requiredElement<HTMLElement>("rep-count");
 const kneeAngleText = requiredElement<HTMLElement>("knee-angle");
 const torsoLeanText = requiredElement<HTMLElement>("torso-lean");
 const phaseText = requiredElement<HTMLElement>("phase");
-const context = canvas.getContext("2d");
-if (!context) {
-  throw new Error("Canvas is unavailable");
-}
+const context = requiredCanvasContext(canvas);
 
 const analyzer = new SquatAnalyzer();
 let landmarker: PoseLandmarker | null = null;

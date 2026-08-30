@@ -113,6 +113,7 @@ export class SquatAnalyzer {
   private smoothedTorsoLean: number | null = null;
   private lastRepWasGood: boolean | null = null;
   private lastFeedback = "Stand side-on with your full body visible.";
+  private preserveReadyFeedback = false;
 
   reset(): void {
     this.phase = "ready";
@@ -123,6 +124,7 @@ export class SquatAnalyzer {
     this.smoothedTorsoLean = null;
     this.lastRepWasGood = null;
     this.lastFeedback = "Stand side-on with your full body visible.";
+    this.preserveReadyFeedback = false;
   }
 
   update(
@@ -182,7 +184,8 @@ export class SquatAnalyzer {
           this.minimumKneeAngle = kneeAngle;
           this.maximumTorsoLean = lean;
           this.lastFeedback = "Lower under control.";
-        } else {
+          this.preserveReadyFeedback = false;
+        } else if (!this.preserveReadyFeedback) {
           this.lastFeedback = "Ready. Begin your squat when comfortable.";
         }
         break;
@@ -193,6 +196,7 @@ export class SquatAnalyzer {
         } else if (kneeAngle >= 160) {
           this.phase = "ready";
           this.lastFeedback = "Try a little more depth on the next rep.";
+          this.preserveReadyFeedback = true;
           this.clearRepMeasurements();
         } else if (lean <= 45) {
           this.lastFeedback = "Lower under control.";
@@ -213,6 +217,7 @@ export class SquatAnalyzer {
             ? `Rep ${this.reps} complete. Good control.`
             : `Rep ${this.reps} complete. Keep your chest more upright.`;
           this.phase = "ready";
+          this.preserveReadyFeedback = true;
           this.clearRepMeasurements();
         }
         break;
