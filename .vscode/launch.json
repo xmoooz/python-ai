@@ -1,0 +1,46 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "FastAPI: Debug",
+      "type": "debugpy",
+      "request": "launch",
+      "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "module": "uvicorn",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "app.main:app",
+        "--host=127.0.0.1",
+        "--port=8000"
+      ],
+      "env": {
+        "APP_ENV": "dev",
+        "PYTHONPATH": "${workspaceFolder}"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "redirectOutput": true
+    },
+    {
+      "name": "FastAPI: Run with reload",
+      "type": "debugpy",
+      "request": "launch",
+      "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "module": "uvicorn",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "app.main:app",
+        "--host=127.0.0.1",
+        "--port=8000",
+        "--reload"
+      ],
+      "env": {
+        "APP_ENV": "dev",
+        "PYTHONPATH": "${workspaceFolder}"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "subProcess": true
+    }
+  ]
+}

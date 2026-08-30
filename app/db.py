@@ -14,8 +14,8 @@ async def get_pool() -> asyncpg.Pool:
         settings = get_settings()
         _pool = await asyncpg.create_pool(
             settings.database_url,
-            min_size=2,
-            max_size=10,
+            min_size=settings.postgres_pool_min_size,
+            max_size=settings.postgres_pool_max_size,
             init=register_vector,
         )
     return _pool
