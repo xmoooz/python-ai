@@ -4,9 +4,10 @@ import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
-from app.config import get_settings
+from app.config import ROOT_DIR, get_settings
 from app.db import close_pool, get_pool
 
 
@@ -19,6 +20,7 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
 
 def create_app() -> FastAPI:
     settings = get_settings()
+    gym_frontend = ROOT_DIR / "app" / "static" / "gym"
     logging.getLogger().setLevel(settings.log_level)
 
     application = FastAPI(
@@ -39,6 +41,25 @@ def create_app() -> FastAPI:
             allow_credentials=not allow_all,
             allow_methods=["*"],
             allow_headers=["*"],
+        )
+
+    if gym_frontend.is_dir():
+        application.mount(
+            "/gym",
+            StaticFiles(directory=gym_frontend, html=True),
+            name="gym",
+        )
+
+    @application.get("/", include_in_schema=False, response_model=None)
+    async def home() -> RedirectResponse | JSONResponse:
+        if gym_frontend.is_dir():
+            return RedirectResponse("/gym/")
+        return JSONResponse(
+            {
+                "message": "Gym frontend is not built",
+                "build": "cd frontend && npm install && npm run build",
+            },
+            status_code=503,
         )
 
     @application.get("/health")

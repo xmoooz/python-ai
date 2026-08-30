@@ -206,6 +206,10 @@ cython_debug/
 # Temporary file for partial code execution
 tempCodeRunnerFile.py
 
+# JavaScript / generated gym frontend
+node_modules/
+app/static/gym/
+
 # Ruff stuff:
 .ruff_cache/
 
