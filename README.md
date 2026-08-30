@@ -23,7 +23,8 @@ Google and jsDelivr when a session starts.
 
 Voice output uses the browser Speech Synthesis API. Voice commands use the Web
 Speech API where supported; camera analysis still works when speech recognition
-is unavailable.
+is unavailable. Depending on the browser, speech recognition may use the
+browser vendor's remote service and is therefore optional.
 
 ### Build and serve from FastAPI
 
