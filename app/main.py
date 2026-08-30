@@ -7,12 +7,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.config import get_settings
-from app.db import close_pool, get_pool
+from app.db import close_pool, get_pool, run_migrations
+from app.jobs.router import router as jobs_router
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
-    await get_pool()
+    pool = await get_pool()
+    await run_migrations(pool)
     yield
     await close_pool()
 
@@ -40,6 +42,8 @@ def create_app() -> FastAPI:
             allow_methods=["*"],
             allow_headers=["*"],
         )
+
+    application.include_router(jobs_router)
 
     @application.get("/health")
     async def health() -> JSONResponse:

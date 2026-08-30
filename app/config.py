@@ -66,10 +66,12 @@ class Settings(BaseSettings):
     openai_api_key: SecretStr | None = None
     anthropic_api_key: SecretStr | None = None
     google_api_key: SecretStr | None = None
+    job_ingestion_key: SecretStr | None = None
+    job_source_hosts: list[str] = Field(default_factory=list)
 
-    @field_validator("cors_origins", mode="before")
+    @field_validator("cors_origins", "job_source_hosts", mode="before")
     @classmethod
-    def _split_cors_origins(cls, value: object) -> object:
+    def _split_list_setting(cls, value: object) -> object:
         if value is None or value == "":
             return []
         if isinstance(value, str):
