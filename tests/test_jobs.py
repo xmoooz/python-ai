@@ -97,6 +97,16 @@ class SourceAllowlistTests(unittest.TestCase):
             source_host_is_allowed(request.source_url, ["example.com"])
         )
 
+    def test_rejects_insecure_source(self) -> None:
+        request = CrawlJobRequest(
+            source_url="http://example.com/job",
+            company="Example",
+        )
+
+        self.assertFalse(
+            source_host_is_allowed(request.source_url, ["example.com"])
+        )
+
 
 class JobRepositoryTests(unittest.TestCase):
     def test_builds_parameterized_filters(self) -> None:

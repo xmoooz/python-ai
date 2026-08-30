@@ -49,6 +49,8 @@ def require_ingestion_access(
 
 
 def source_host_is_allowed(url: HttpUrl, allowed_hosts: list[str]) -> bool:
+    if url.scheme != "https":
+        return False
     host = (url.host or "").rstrip(".").casefold()
     return any(
         host == allowed.rstrip(".").casefold()
