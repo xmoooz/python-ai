@@ -14,6 +14,7 @@ const MODEL_URL =
 const WASM_URL =
   "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/wasm";
 const FRAME_INTERVAL_MS = 66;
+const inferenceCanvas = document.createElement("canvas");
 
 interface SpeechRecognitionResultLike {
   readonly length: number;
@@ -101,6 +102,7 @@ async function createLandmarker(): Promise<PoseLandmarker> {
       modelAssetPath: MODEL_URL,
       delegate: "GPU" as const,
     },
+    canvas: inferenceCanvas,
     runningMode: "VIDEO" as const,
     numPoses: 1,
     minPoseDetectionConfidence: 0.6,
@@ -167,6 +169,13 @@ function stopCamera(): void {
   statusText.textContent = "Camera stopped";
   startButton.disabled = false;
   stopButton.disabled = true;
+}
+
+function dispose(): void {
+  stopCamera();
+  recognition?.stop();
+  landmarker?.close();
+  landmarker = null;
 }
 
 function analyzeFrame(now = performance.now()): void {
@@ -322,7 +331,7 @@ startButton.addEventListener("click", () => void startCamera());
 stopButton.addEventListener("click", stopCamera);
 resetButton.addEventListener("click", resetSession);
 voiceButton.addEventListener("click", toggleVoiceControl);
-window.addEventListener("beforeunload", stopCamera);
+window.addEventListener("beforeunload", dispose);
 
 configureVoiceControl();
 renderAnalysis(analyzer.update([], 1, 1));
